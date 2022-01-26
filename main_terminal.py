@@ -1,5 +1,5 @@
 ##################################################################
-# Hello there! This is a game that is a simple stock trading     #
+# Hello there! This gameis a simple stock trading                #
 # desktop game. Its run entirely from the terminal to make       #
 # things easier on me, allowing me to focus more on the math     #
 # and order of operations since this is my first proper project  #
@@ -27,7 +27,6 @@
 #       in the previous day. 
 
 from asyncore import loop
-from pickle import TRUE
 import random
 import os
 import time
@@ -42,6 +41,7 @@ net_worth = 1000
 net_worth_yesterday = 0
 pound_line = "###############################################"
 change_in_nw = 0
+start_day = True
 
 
 # currencies, user should start with some dollars and everything is measured in dollars.
@@ -60,6 +60,33 @@ ubv = [4, 0.0, 0.0, 0.0]
 # but will just adjust the number of currencies.
 all_currencies = [gold,bitcoin,tmc,bwc,qbl,ppb,ubv]
 all_curr_display = ['Gold','Bitcoin','TMC','BWC','QBL','PPB','UBV']
+
+
+# this function prints the standard balances screen. Used at the start of every day
+# and after a transaction. 
+def standard_print(day_counter,net_worth,dollars,all_currencies,all_curr_display,start_day):
+    pound_line = "###############################################"
+    print(pound_line, "\nWelcome to Day:",day_counter, "\n\n")
+    print("Here is your portfolio: ")
+    if (day_counter > 1):
+        print("Change in Net Worth from Yesterday: %", change_in_nw)
+    print("Net worth: $", net_worth)
+    print("Dollars  = $",dollars[2])
+    loop_counter = 0
+    for i in all_currencies:   
+        print(all_curr_display[loop_counter], " = $", i[2])
+        loop_counter += 1
+    loop_counter = 0
+
+    # the first use of this def a day must actually calc these values, this just prints them
+    if (start_day == False) :
+        print("\nHere are the predictions for today:")
+        for i in all_currencies:
+            print(all_curr_display[loop_counter], " : ", int(i[1]*100), "%")
+            loop_counter += 1
+        loop_counter = 0
+        
+
 
 
 # this is the primary loop, be sure to change the game_over = true as needed
@@ -92,46 +119,31 @@ while game_over == False:
             except ValueError:
                 print("Invalid entry :/")
 
-
-    # runs tutorial if requested
     if tutorial == True:
         ## enter tutorial here lol 
         print("Placeholder for tutorial, best of luck chap this will take a bit :/")
 
 
-    # for testing purposes I have it set to run till a set number of days,
-    # for  playing I reccomend setting this to like a million dollars or something. 
-    day_counter += 1 
-    if day_counter > 10:
-        game_over = True
-
+    # intro to today text, day # and balances of usr portfolio etc.
+    day_counter += 1
+    start_day = True
+    standard_print(day_counter,net_worth,dollars,all_currencies,all_curr_display,start_day)
     
-    # intro to today text, day # and balances of usr portfolio
-    print(pound_line, "\nWelcome to Day:",day_counter, "\n\n")
-    print("Here is your portfolio: ")
-    print("Net worth: $", net_worth, "   Change in Net Worth from Yesterday: %", change_in_nw)
-    print("Dollars  = $",dollars[2])
-    for i in all_currencies:   
-        print(all_curr_display[loop_counter], " = $", i[2])
-        loop_counter += 1
-    loop_counter = 0
-
 
     # predicitons for each day's varience - expected proformance 
     # the variance caluclation edits the [1] in all currency's lists 
-    ####################################################################### todo = switch i to something that makes sense
     print("\nHere are the predictions for today:")
-    for i in all_currencies:
+    for curr in all_currencies:
         generic = random.random()/10
         if random.random() < 0.5:
             generic = generic*-1
-        i[1] = generic
-        display_i = i[1]*100
-        display_i = int(display_i)
-        print(all_curr_display[loop_counter], " : ", display_i, "%")
+        curr[1] = generic
+        display_curr = curr[1]*100
+        display_curr = int(display_curr)
+        print(all_curr_display[loop_counter], " : ", display_curr, "%")
         loop_counter += 1
     loop_counter = 0
-
+    start_day = False
 
 
     # this is the transaction logic loop. Essentially for each of the currencies the user needs to either 
@@ -148,21 +160,7 @@ while game_over == False:
             #reset display after last transaction
             if curr_counter >= 1:
                 os.system('clear')
-                print(pound_line, "\nWelcome to Day:",day_counter, "\n\n")
-                print("Here is your portfolio: ")
-                print("Net worth: $", net_worth, "Change in Net Worth from Yesterday: %", change_in_nw)
-                print("Dollars  = $",dollars[2])
-                for i in all_currencies:   
-                    print(all_curr_display[loop_counter], " = $", i[2])
-                    loop_counter += 1
-                loop_counter = 0
-                print("\nHere are the predictions for today:")
-                for i in all_currencies:
-                    print(all_curr_display[loop_counter], " : ", int(i[1]*100), "%")
-                    loop_counter += 1
-                loop_counter = 0
-
-
+                standard_print(day_counter,net_worth,dollars,all_currencies,all_curr_display,start_day)
 
 
             valid_change = False
@@ -186,11 +184,8 @@ while game_over == False:
             print("\n\n## Transaction was successful! ##   \n\nYour current balance in Dollars: $", dollars[2])
             print("Your current",curr, "Balance is $", all_currencies[curr_counter][2])
             
-            # this allows the user to see 'transaction successful, for a few seconds. 
-            print("(continuing in 3 seconds.)" )
-            time.sleep(3)
-
-
+            # this allows the user to see 'transaction successful, for a second
+            time.sleep(1)
             curr_counter += 1 
 
 
@@ -218,6 +213,7 @@ while game_over == False:
     # variance number is input along with prediction, then the system runs random functions in magnitude approximating
     # the variance number and a small handful of times, starting with the prediction number. 
     curr_counter = 0
+    os.system('clear')
     for curr in all_curr_display:
         # these are somewhat redundant but they help with readability in the algorithm.
         curr_variance = all_currencies[curr_counter][0]
@@ -258,7 +254,8 @@ while game_over == False:
     net_worth_yesterday = net_worth    
     curr_counter = 0
     for all in all_curr_display:
-
+        if (curr_counter ==0):
+            net_worth = 0
         net_worth = net_worth + all_currencies[curr_counter][2]
         curr_counter += 1
     change_in_nw = int((net_worth - net_worth_yesterday)/(net_worth_yesterday)*100)
