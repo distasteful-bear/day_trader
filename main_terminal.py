@@ -95,7 +95,10 @@ while game_over == False:
 
 
     # Game Ends at net worth of 100k
-    if net_worth >= 10000:
+    win_condition = False
+    final_score = 10000
+    win_condition = net_worth >= final_score
+    if win_condition:
         game_over = True
 
 
@@ -120,11 +123,39 @@ while game_over == False:
                 print("Invalid entry :/")
 
     if tutorial == True:
-        ## enter tutorial here lol 
-        print("Placeholder for tutorial, best of luck chap this will take a bit :/")
+        start_day = False
+        standard_print(day_counter,net_worth,dollars,all_currencies,all_curr_display,start_day)
+        start_day = True
+        print("\nWelcome to the tutorial! Sorry this probably looks complicated, but this set of text above ^^ is printed everyday.")
+        print("\nThere are three main sections:")
+        print("First is the Net Worth tag. This is the total of all of your money. Both your cash and the value of your investments.")
+        print("Second is the list of balances in your account. This lists in dollars the value or all your holdings.")
+        print("Finally, the 'predictions' list: this lists the forcast of a currencies value.")
+        print("You can use this to advise your investments for the day, but this will not perfectly predict the outcome.")
+        print("Each currency also has a variance. This is a good predictor of how much a currency is likely to stray from its prediction.")
+        print("Best of luck discovering the variance. \n Lastly, if you earn over ", final_score, " you win! Best of luck getting there.")
+
+        user_entry_valid = False
+        while user_entry_valid == False:
+            try:
+                user_entry = str(input("Are you ready to play? (y/n)"))
+                if user_entry == 'y':
+                    os.system('clear')
+                    tutorial = False
+                    break    
+                elif user_entry == 'n':
+                    os.system('clear')
+                    tutorial = False
+                    game_over = True
+                    exit()
+                else :
+                    print("Invlalid entry :/")
+            except ValueError:
+                print("Invalid entry :/")
+
+    
 
 
-    # intro to today text, day # and balances of usr portfolio etc.
     day_counter += 1
     start_day = True
     standard_print(day_counter,net_worth,dollars,all_currencies,all_curr_display,start_day)
@@ -151,7 +182,7 @@ while game_over == False:
     # the curr_counter keeps track of the number of times the loop has run to allow editing the list of the currency
     # while the curr variable is the string title of the current selected currency.
     user_trans_complete = False
-    if user_trans_complete == False:
+    while user_trans_complete == False:
 
         curr_counter = 0
         for curr in all_curr_display:
@@ -195,10 +226,10 @@ while game_over == False:
                 user_entry = str(input("Are you finished making transactions for today? \n(y/n) \n"))
                 if user_entry == 'y':
                     user_trans_complete = True
-                    break    
+                    user_entry_valid = True
                 elif user_entry == 'n':
                     user_trans_complete = False
-                    break
+                    user_entry_valid = True
                 else :
                     print("Invlalid entry :/")
             except ValueError:
@@ -279,5 +310,6 @@ while game_over == False:
             print("Invalid entry :/")
         
     
+
 
 
