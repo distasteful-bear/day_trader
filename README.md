@@ -1,6 +1,5 @@
-
-
 Hello! 
+
 This is a day trader game which is my first application in python.
 It is not rocket science, but I am enjoying the process. I hope
 you find it interesting. 
@@ -12,4 +11,5 @@ My email is distasteful.bear@gmail.com for all messages related to my
 GitHub, but all my verfified comments are signed with jamesmetz1231@gmail.com
 
 (Also bug reporting would be valuable and GitHub works well for that.)
+
 Cheers!
